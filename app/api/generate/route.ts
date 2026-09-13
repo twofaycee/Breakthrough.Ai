@@ -1,0 +1,3 @@
+import {supabaseAdmin} from '@/lib/supabase'
+import {createGeneration} from '@/lib/runway'
+export async function POST(req:Request){const {prompt,genre}=await req.json();if(!supabaseAdmin) return Response.json({error:'No supabase'},{status:500});const gen:any=await createGeneration(prompt,genre);const film={id:`bt-${Date.now()}`,title:prompt.slice(0,60).toUpperCase(),genre,synopsis:prompt,video_url:gen.videoUrl,match:97,status:'scheduled',scheduled_release_at:new Date(Date.now()+2*60*60*1000).toISOString(),expires_at:new Date(Date.now()+30*24*60*60*1000).toISOString()};await supabaseAdmin.from('films').insert(film);return Response.json({status:'succeeded',film,video_url:film.video_url,message:'BREAKTHROUGH film scheduled - will release in 2h, strategic not flooding'})}

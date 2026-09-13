@@ -1,0 +1,2 @@
+import {stripe} from '@/lib/stripe'
+export async function POST(req:Request){const sig=req.headers.get('stripe-signature');const sec=process.env.STRIPE_WEBHOOK_SECRET;if(!stripe||!sec||!sig) return Response.json({received:true});const b=await req.text();try{stripe.webhooks.constructEvent(b,sig,sec);return Response.json({received:true})}catch(e:any){return Response.json({error:e.message},{status:400})}}
