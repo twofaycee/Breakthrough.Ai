@@ -1,3 +1,2 @@
 'use client'
-import {useEffect,useState} from 'react'
-export default function Admin(){const [f,setF]=useState<any[]>([]);useEffect(()=>{fetch('/api/films').then(r=>r.json()).then(d=>setF(Array.isArray(d)?d:[]))},[]);return <main style={{background:'#050505',color:'#fff',padding:20}}><a href='/' style={{color:'#fff',fontWeight:900}}>BREAKTHROUGH.AI</a><h1 style={{marginTop:16}}>Admin • breakthrough.ai</h1><div style={{marginTop:12}}>{f.map(x=><div key={x.id} style={{background:'#111',padding:10,marginBottom:6,borderRadius:8,fontSize:12}}>{x.title} - {x.status} - {x.views} views</div>)}</div></main>}
+export default function Admin(){return <main style={{background:'#050505',color:'#fff',padding:20}}><a href='/' style={{color:'#fff'}}>← BREAKTHROUGH.AI</a><h1>Admin</h1></main>}
