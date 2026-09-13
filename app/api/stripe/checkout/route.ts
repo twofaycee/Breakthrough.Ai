@@ -1,18 +1,3 @@
-
-import { stripe } from '@/lib/stripe'
+import {stripe} from '@/lib/stripe'
 export const dynamic='force-dynamic'
-export async function POST(){
-  if(!stripe) return Response.json({error:'Add STRIPE_SECRET_KEY in Vercel Env Vars - Stripe not connected'},{status:500})
-  const priceId=process.env.NEXT_PUBLIC_STRIPE_PRICE_ID
-  const appUrl=process.env.NEXT_PUBLIC_APP_URL||'https://breakthrough.ai'
-  if(!priceId) return Response.json({error:'Add NEXT_PUBLIC_STRIPE_PRICE_ID - create product in Stripe first'},{status:500})
-  try{
-    const session=await stripe.checkout.sessions.create({
-      mode:'subscription',
-      line_items:[{price:priceId,quantity:1}],
-      success_url:`${appUrl}/?success=1`,
-      cancel_url:`${appUrl}/?canceled=1`
-    })
-    return Response.json({url:session.url})
-  }catch(e:any){ return Response.json({error:e.message},{status:500}) }
-}
+export async function POST(){if(!stripe) return Response.json({error:'Add STRIPE_SECRET_KEY'},{status:500});const pid=process.env.NEXT_PUBLIC_STRIPE_PRICE_ID;const url=process.env.NEXT_PUBLIC_APP_URL||'https://breakthrough.ai';if(!pid) return Response.json({error:'Add PRICE_ID'},{status:500});const s=await stripe.checkout.sessions.create({mode:'subscription',line_items:[{price:pid,quantity:1}],success_url:`${url}/?success=1`,cancel_url:`${url}/?canceled=1`});return Response.json({url:s.url})}

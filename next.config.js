@@ -1,1 +1,1 @@
-module.exports={eslint:{ignoreDuringBuilds:true},typescript:{ignoreBuildErrors:true},images:{unoptimized:true},experimental:{missingSuspenseWithCSRBailout:false}}
+module.exports={eslint:{ignoreDuringBuilds:true},typescript:{ignoreBuildErrors:true},images:{unoptimized:true}}
