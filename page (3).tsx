@@ -1,0 +1,3 @@
+'use client'
+import {useState} from 'react'
+export default function Bot(){const [last,setLast]=useState<any>(null);return <main style={{background:'#050505',color:'#fff',padding:20}}><a href='/' style={{color:'#fff'}}>← BREAKTHROUGH.AI</a><h1 style={{marginTop:12}}>🤖 Bot - Fixed Build</h1><button onClick={async()=>{const r=await fetch('/api/bot/run');setLast(await r.json())}} style={{background:'#22c55e',color:'#000',padding:'10px 20px',borderRadius:999,border:'none',fontWeight:900,marginTop:12}}>Run Bot Now</button>{last&&<pre style={{marginTop:12,background:'#111',padding:12,borderRadius:10,fontSize:11,whiteSpace:'pre-wrap'}}>{JSON.stringify(last,null,2)}</pre>}</main>}
