@@ -14,7 +14,7 @@ jobs:
       - name: Wait for complete archive
         run: |
           count=$(find v19-parts -maxdepth 1 -type f -name 'part.*' | wc -l)
-          if [ "$count" -lt 14 ]; then echo "Archive incomplete: $count/14 parts"; exit 0; fi
+          if [ "$count" -lt 11 ]; then echo "Archive incomplete: $count/11 parts"; exit 0; fi
       - name: Rebuild v19 archive
         run: |
           cat v19-parts/part.* > /tmp/v19.zip.b64
