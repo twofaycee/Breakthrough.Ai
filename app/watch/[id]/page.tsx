@@ -1,31 +1,10 @@
 const films = {
-  'the-general': {
-    title: 'The General',
-    year: '1926',
-    genre: 'Comedy · War · Romance',
-    description: 'Buster Keaton’s silent-action classic follows engineer Johnnie Gray as he races across enemy lines to rescue his beloved Annabelle and his locomotive.',
-    video: 'https://archive.org/download/TheGeneral1926/The_General_1926_720p.mp4',
-    type: 'video/mp4',
-    source: 'Internet Archive / Public Domain'
-  },
-  'his-girl-friday': {
-    title: 'His Girl Friday',
-    year: '1940',
-    genre: 'Comedy · Romance · Crime',
-    description: 'A fast-talking newspaper editor tries to keep his star reporter—and estranged wife—from leaving the newsroom for good.',
-    video: 'https://upload.wikimedia.org/wikipedia/commons/8/81/His_Girl_Friday_%281940%29.ogv',
-    type: 'video/ogg',
-    source: 'Wikimedia Commons / Public Domain'
-  },
-  'night-of-the-living-dead': {
-    title: 'Night of the Living Dead',
-    year: '1968',
-    genre: 'Horror · Zombie',
-    description: 'Seven strangers barricade themselves inside a rural farmhouse while the recently dead rise outside and the survivors turn on each other.',
-    video: 'https://upload.wikimedia.org/wikipedia/commons/b/bb/Night_of_the_Living_Dead_%281968_film%29.webm',
-    type: 'video/webm',
-    source: 'Wikimedia Commons / Public Domain'
-  }
+  'the-general': { title:'The General', year:'1926', genre:'Comedy · War · Romance', description:'Buster Keaton’s silent-action classic follows engineer Johnnie Gray as he races across enemy lines to rescue his beloved Annabelle and his locomotive.', video:'https://archive.org/download/TheGeneral1926/The_General_1926_720p.mp4', type:'video/mp4', source:'Internet Archive / public-domain film' },
+  'his-girl-friday': { title:'His Girl Friday', year:'1940', genre:'Comedy · Romance · Crime', description:'A fast-talking newspaper editor tries to keep his star reporter—and estranged wife—from leaving the newsroom for good.', video:'https://upload.wikimedia.org/wikipedia/commons/8/81/His_Girl_Friday_%281940%29.ogv', type:'video/ogg', source:'Wikimedia Commons / U.S. public-domain film' },
+  'night-of-the-living-dead': { title:'Night of the Living Dead', year:'1968', genre:'Horror · Zombie', description:'Seven strangers barricade themselves inside a rural farmhouse while the recently dead rise outside and the survivors turn on each other.', video:'https://upload.wikimedia.org/wikipedia/commons/b/bb/Night_of_the_Living_Dead_%281968_film%29.webm', type:'video/webm', source:'Wikimedia Commons / U.S. public-domain film' },
+  'detour': { title:'Detour', year:'1945', genre:'Film Noir · Crime · Thriller', description:'A New York pianist hitchhikes toward Hollywood, only to become trapped in a deadly chain of bad decisions.', video:'https://upload.wikimedia.org/wikipedia/commons/b/b7/Detour_%281945%29_by_Edgar_G._Ulmer.webm', type:'video/webm', source:'Wikimedia Commons / U.S. public-domain film' },
+  'the-stranger': { title:'The Stranger', year:'1946', genre:'Film Noir · Mystery · Thriller', description:'A war-crimes investigator tracks a hidden Nazi fugitive who has built a new life in a quiet American town.', video:'https://upload.wikimedia.org/wikipedia/commons/2/2b/The_stranger_%281946%29.webm', type:'video/webm', source:'Wikimedia Commons / U.S. public-domain film' },
+  'charade': { title:'Charade', year:'1963', genre:'Mystery · Romance · Comedy', description:'A Parisian widow is pursued by dangerous strangers while trying to discover what happened to her husband and his missing fortune.', video:'https://upload.wikimedia.org/wikipedia/commons/d/dc/Charade_%281963%29.webm', type:'video/webm', source:'Wikimedia Commons / U.S. public-domain film' }
 } as const
 
 export default async function Watch({params}:{params:Promise<{id:string}>}){
