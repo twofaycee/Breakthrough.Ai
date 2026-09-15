@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect,useMemo,useState} from 'react'
+import {supabase} from '@/lib/supabase'
 
 const titles=[
  {id:'the-general',title:'The General',year:'1926',genre:'Comedy · War · Romance',desc:'Buster Keaton races across enemy lines to rescue his beloved and his locomotive.'},
@@ -13,11 +14,10 @@ const titles=[
 
 export default function MyList(){
  const [saved,setSaved]=useState<string[]>([])
- useEffect(()=>{try{setSaved(JSON.parse(localStorage.getItem('breakthrough_my_list')||'[]'))}catch{setSaved([])}},[])
+ const [user,setUser]=useState(false)
+ const [loading,setLoading]=useState(true)
+ useEffect(()=>{(async()=>{if(!supabase){setLoading(false);return}const {data:{user}}=await supabase.auth.getUser();if(!user){setLoading(false);return}setUser(true);const {data}=await supabase.from('watchlist').select('title_id').eq('user_id',user.id);setSaved((data||[]).map(x=>x.title_id));setLoading(false)})()},[])
  const items=useMemo(()=>titles.filter(t=>saved.includes(t.id)),[saved])
- const remove=(id:string)=>{const next=saved.filter(x=>x!==id);setSaved(next);localStorage.setItem('breakthrough_my_list',JSON.stringify(next))}
- return <main className="shell"><nav className="nav"><a className="brand" href="/">BREAKTHROUGH</a><div className="navlinks"><a href="/movies">Movies</a><a href="/series">Series</a><a href="/search">Search</a><a href="/pricing">Pricing</a></div><div className="actions"><a className="btn" href="/">Home</a></div></nav>
- <section className="section" style={{paddingTop:70}}><div className="eyebrow">YOUR LIBRARY</div><h1>My List</h1><p className="muted" style={{maxWidth:650}}>Keep the titles you want to come back to in one place.</p>
- {!items.length?<div className="panel" style={{marginTop:30}}><h3>Your list is empty.</h3><p className="muted">Browse the catalog and add titles you want to watch later.</p><a className="btn primary" href="/movies" style={{display:'inline-block',marginTop:12}}>Browse movies</a></div>:<div className="grid" style={{marginTop:30}}>{items.map(t=><article className="card" key={t.id}><div><div className="tag">{t.genre}</div><h3>{t.title}</h3><p className="muted">{t.year} · {t.desc}</p><div style={{display:'flex',gap:8,marginTop:14,flexWrap:'wrap'}}><a className="btn primary" href={`/watch/${t.id}`}>Watch now</a><button className="btn" onClick={()=>remove(t.id)}>Remove</button></div></div></article>)}</div>}
- </section><footer className="footer">© 2026 BREAKTHROUGH. Stories worth staying up for.</footer></main>
+ const remove=async(id:string)=>{if(!supabase)return;const {data:{user}}=await supabase.auth.getUser();if(!user)return;await supabase.from('watchlist').delete().eq('user_id',user.id).eq('title_id',id);setSaved(x=>x.filter(v=>v!==id))}
+ return <main className="shell"><nav className="nav"><a className="brand" href="/">BREAKTHROUGH</a><div className="navlinks"><a href="/movies">Movies</a><a href="/series">Series</a><a href="/search">Search</a><a href="/pricing">Pricing</a></div><div className="actions"><a className="btn" href="/">Home</a></div></nav><section className="section" style={{paddingTop:70}}><div className="eyebrow">YOUR LIBRARY</div><h1>My List</h1><p className="muted" style={{maxWidth:650}}>Keep the titles you want to come back to in one place.</p>{loading?<div className="panel" style={{marginTop:30}}><p className="muted">Loading your library…</p></div>:!user?<div className="panel" style={{marginTop:30}}><h3>Sign in to build your list.</h3><p className="muted">Your saved titles will follow you across devices.</p><a className="btn primary" href="/login?next=%2Fmy-list" style={{display:'inline-block',marginTop:12}}>Sign in</a></div>:!items.length?<div className="panel" style={{marginTop:30}}><h3>Your list is empty.</h3><p className="muted">Browse the catalog and add titles you want to watch later.</p><a className="btn primary" href="/movies" style={{display:'inline-block',marginTop:12}}>Browse movies</a></div>:<div className="grid" style={{marginTop:30}}>{items.map(t=><article className="card" key={t.id}><div><div className="tag">{t.genre}</div><h3>{t.title}</h3><p className="muted">{t.year} · {t.desc}</p><div style={{display:'flex',gap:8,marginTop:14,flexWrap:'wrap'}}><a className="btn primary" href={`/watch/${t.id}`}>Watch now</a><button className="btn" onClick={()=>remove(t.id)}>Remove</button></div></div></article>)}</div>}</section><footer className="footer">© 2026 BREAKTHROUGH. Stories worth staying up for.</footer></main>
 }
