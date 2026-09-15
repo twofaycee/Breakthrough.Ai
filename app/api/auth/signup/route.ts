@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { supabaseServer } from '@/lib-supabase-server'
-import { createAdminClient } from '@/lib/supabase/admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -20,27 +19,30 @@ export async function POST(req: Request) {
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) return NextResponse.json({ error: 'Enter a valid email address.' }, { status: 400 })
     if (password.length < 8) return NextResponse.json({ error: 'Use a password with at least 8 characters.' }, { status: 400 })
 
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY
-    if (serviceKey) {
-      const admin = createAdminClient()
-      const { data, error } = await admin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: { display_name: email.split('@')[0] },
-      })
-      if (error) return NextResponse.json({ error: friendly(error.message) }, { status: 400 })
-      return NextResponse.json({ ok: true, userId: data.user?.id, instant: true })
-    }
+    const supabase = await supabaseServer()
+    const origin = new URL(req.url).origin
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${origin}/auth/confirm?next=/`,
+        data: { display_name: email.split('@')[0] },
+      },
+    })
 
-    const supa = await supabaseServer()
-    const { data, error } = await supa.auth.signUp({ email, password })
     if (error) {
       const lower = error.message.toLowerCase()
-      if (lower.includes('rate limit') || lower.includes('email rate') || lower.includes('too many')) return NextResponse.json({ error: friendly(error.message), code: 'EMAIL_RATE_LIMIT' }, { status: 429, headers: { 'Retry-After': '60' } })
+      if (lower.includes('rate limit') || lower.includes('email rate') || lower.includes('too many')) {
+        return NextResponse.json({ error: friendly(error.message), code: 'EMAIL_RATE_LIMIT' }, { status: 429, headers: { 'Retry-After': '60' } })
+      }
       return NextResponse.json({ error: friendly(error.message) }, { status: 400 })
     }
-    return NextResponse.json({ ok: true, needsConfirmation: !data.session, message: data.session ? 'Account created. Welcome to BREAKTHROUGH.' : 'Account created. Check your email to finish signing in.' })
+
+    return NextResponse.json({
+      ok: true,
+      needsConfirmation: !data.session,
+      message: data.session ? 'Account created. Welcome to BREAKTHROUGH.' : 'Account created. Check your email to finish signing in.',
+    })
   } catch (e) {
     console.error('Signup route failed', e)
     return NextResponse.json({ error: 'We hit a temporary problem creating your account. Please try again.' }, { status: 500 })
