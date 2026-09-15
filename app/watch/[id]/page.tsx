@@ -1,4 +1,4 @@
-import WatchPlayer from '../WatchPlayer'
+import WatchPlayer from '../../WatchPlayer'
 
 const films = {
   'the-general': { title:'The General', year:'1926', genre:'Comedy · War · Romance', description:'Buster Keaton’s silent-action classic follows engineer Johnnie Gray as he races across enemy lines to rescue his beloved Annabelle and his locomotive.', video:'https://archive.org/download/TheGeneral1926/The_General_1926_720p.mp4', type:'video/mp4', source:'Internet Archive / public-domain film' },
