@@ -1,12 +1,12 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://unjxaldxkdsilmkkhtvy.supabase.co'
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable__ppk6zAxE-qWF0L_krFtyg_AXNMHc4H'
+
 export async function supabaseServer() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://unjxaldxkdsilmkkhtvy.supabase.co'
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  if (!key) throw new Error('Supabase publishable key is not configured in Vercel.')
   const jar = await cookies()
-  return createServerClient(url, key, {
+  return createServerClient(SUPABASE_URL, SUPABASE_KEY, {
     cookies: {
       getAll() { return jar.getAll() },
       setAll(list) {
