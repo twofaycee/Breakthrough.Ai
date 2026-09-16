@@ -93,8 +93,7 @@ export async function POST(req:Request){
       wardrobe:character.wardrobe,
       voice:character.voice,
       utilization_budget:character.utilization_budget,
-      identity_fingerprint:`${plan.cast_universe_id}:${character.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`,
-      reference_status:'not_started'
+      status:'queued'
     }))
     const {data:characters,error:characterError}=await supabase.from('production_characters').insert(castRows).select('id,name,role')
     if(characterError) throw characterError
