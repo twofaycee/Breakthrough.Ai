@@ -1,3 +1,12 @@
 import {redirect} from 'next/navigation'
 import {supabaseServer} from '@/lib-supabase-server'
-export default async function Admin(){const supabase=await supabaseServer();const {data:{user}}=await supabase.auth.getUser();if(!user)redirect('/login?next=%2Fadmin');const {data:profile}=await supabase.from('profiles').select('is_admin').eq('id',user.id).maybeSingle();if(!profile?.is_admin)redirect('/');return <main className="shell"><nav className="nav"><a className="brand" href="/">BREAKTHROUGH</a><div className="actions"><a className="btn" href="/">Exit Command Center</a></div></nav><section className="section" style={{paddingTop:60}}><div className="eyebrow">PRIVATE</div><h1>Command Center</h1><p className="muted">Production control, release scheduling, and catalog operations.</p><div className="grid" style={{marginTop:30}}><div className="panel"><div className="eyebrow">PIPELINE</div><h3>Production</h3><p className="muted">Story → Cast → Scenes → Video → Audio → Assembly → QA.</p></div><div className="panel"><div className="eyebrow">CATALOG</div><h3>Releases</h3><p className="muted">Prepare and schedule titles for the public catalog.</p></div><div className="panel"><div className="eyebrow">ACCOUNT</div><h3>Signed in</h3><p className="muted">{user.email}</p></div></div></section></main>}
+import ContentEngine from './ContentEngine'
+
+export default async function Admin(){
+ const supabase=await supabaseServer()
+ const {data:{user}}=await supabase.auth.getUser()
+ if(!user)redirect('/login?next=%2Fadmin')
+ const {data:profile}=await supabase.from('profiles').select('is_admin').eq('id',user.id).maybeSingle()
+ if(!profile?.is_admin)redirect('/')
+ return <main className="shell"><nav className="nav"><a className="brand" href="/">BREAKTHROUGH</a><div className="actions"><a className="btn" href="/">Exit Command Center</a></div></nav><section className="section" style={{paddingTop:60}}><div className="eyebrow">PRIVATE</div><h1>Command Center</h1><p className="muted">Production control, release scheduling, and catalog operations.</p><div className="grid" style={{marginTop:30}}><div className="panel"><div className="eyebrow">PIPELINE</div><h3>Production</h3><p className="muted">Story → Cast → Scenes → Video → Audio → Assembly → QA.</p></div><div className="panel"><div className="eyebrow">CATALOG</div><h3>Releases</h3><p className="muted">Prepare and schedule titles for the public catalog.</p></div><div className="panel"><div className="eyebrow">ACCOUNT</div><h3>Signed in</h3><p className="muted">{user.email}</p></div></div></section><ContentEngine/></main>
+}
