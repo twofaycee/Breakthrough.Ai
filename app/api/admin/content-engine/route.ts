@@ -17,16 +17,18 @@ export async function POST(req:Request){
     const {supabase,allowed}=await adminClient()
     if(!allowed) return NextResponse.json({error:'Admin access required'},{status:403})
     const body=await req.json()
+    const seed=Date.now()
     const brief={
       title:String(body.title||'Untitled Production').trim().slice(0,120),
       genre:String(body.genre||'Thriller').trim().slice(0,80),
       logline:String(body.logline||'').trim().slice(0,1000),
       runtimeSeconds:Number(body.runtimeSeconds)||64,
-      mode:body.mode==='auto'?'auto':'review'
+      mode:body.mode==='auto'?'auto':'review',
+      seed
     } as const
     if(brief.title.length<2) return NextResponse.json({error:'Title is required'},{status:400})
     const engine=buildProduction(brief)
-    const slug=`${slugify(brief.title)||'production'}-${Date.now().toString(36)}`
+    const slug=`${slugify(brief.title)||'production'}-${seed.toString(36)}`
 
     const {data:title,error:titleError}=await supabase.from('titles').insert({title:brief.title,slug,description:brief.logline,type:'movie',status:'draft',runtime_seconds:engine.runtime}).select('id,title,slug').single()
     if(titleError) throw titleError
@@ -49,7 +51,7 @@ export async function POST(req:Request){
     const {error:jobError}=await supabase.from('generation_jobs').insert({title_id:title.id,status:'queued',stage:'story',progress:100,provider:'breakthrough-content-engine'})
     if(jobError) throw jobError
 
-    return NextResponse.json({ok:true,title,planId:plan.id,artifactId:artifact.id,sceneCount:engine.sceneCount,castCount:engine.characters.length,quality:engine.quality})
+    return NextResponse.json({ok:true,title,planId:plan.id,artifactId:artifact.id,sceneCount:engine.sceneCount,castCount:engine.characters.length,castUniverseId:plan.cast_universe_id,quality:engine.quality})
   }catch(error){
     return NextResponse.json({error:error instanceof Error?error.message:'Content engine failed'},{status:500})
   }
