@@ -1,12 +1,19 @@
 'use client'
 
 import { useState } from 'react'
+import { createBrowserClient } from '@supabase/ssr'
+
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+)
 
 export default function Signup(){
   const [email,setEmail]=useState('')
   const [password,setPassword]=useState('')
   const [msg,setMsg]=useState('')
   const [loading,setLoading]=useState(false)
+  const [googleLoading,setGoogleLoading]=useState(false)
 
   async function submit(e:React.FormEvent){
     e.preventDefault()
@@ -23,5 +30,12 @@ export default function Signup(){
     } finally { setLoading(false) }
   }
 
-  return <main className="shell"><nav className="nav"><a className="brand brandWithMark" href="/"><img src="/brand/breakthrough-mark.svg" alt="" aria-hidden="true"/><span>BREAKTHROUGH</span></a></nav><section className="formPage"><div className="eyebrow">Join the platform</div><h1>Create your account</h1><p className="muted">Start watching stories built for the screen.</p><form onSubmit={submit}><input className="input" placeholder="Email address" type="email" value={email} onChange={e=>setEmail(e.target.value)} required autoComplete="email"/><input className="input" placeholder="Password (8+ characters)" type="password" minLength={8} value={password} onChange={e=>setPassword(e.target.value)} required autoComplete="new-password"/><button className="btn primary" type="submit" disabled={loading}>{loading?'Creating your account…':'Create account'}</button></form>{msg&&<div className="notice" style={{color:msg.toLowerCase().includes('created')?'#c7f9d4':'#ffb4b4'}}>{msg}</div>}<p className="muted">Already have an account? <a href="/login">Log in</a></p></section></main>
+  async function signUpWithGoogle(){
+    setGoogleLoading(true); setMsg('')
+    const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent('/')}`
+    const { error } = await supabase.auth.signInWithOAuth({ provider:'google', options:{ redirectTo } })
+    if(error){ setMsg(error.message); setGoogleLoading(false) }
+  }
+
+  return <main className="shell"><nav className="nav"><a className="brand brandWithMark" href="/"><img src="/brand/breakthrough-mark.svg" alt="" aria-hidden="true"/><span>BREAKTHROUGH</span></a></nav><section className="formPage"><div className="eyebrow">Join the platform</div><h1>Create your account</h1><p className="muted">Start watching stories built for the screen.</p><button className="btn" type="button" onClick={signUpWithGoogle} disabled={googleLoading||loading}>{googleLoading?'Connecting…':'Continue with Google'}</button><div style={{display:'flex',alignItems:'center',gap:12,margin:'18px 0',color:'rgba(255,255,255,.45)',fontSize:12}}><span style={{height:1,flex:1,background:'rgba(255,255,255,.14)'}}/><span>OR</span><span style={{height:1,flex:1,background:'rgba(255,255,255,.14)'}}/></div><form onSubmit={submit}><input className="input" placeholder="Email address" type="email" value={email} onChange={e=>setEmail(e.target.value)} required autoComplete="email"/><input className="input" placeholder="Password (8+ characters)" type="password" minLength={8} value={password} onChange={e=>setPassword(e.target.value)} required autoComplete="new-password"/><button className="btn primary" type="submit" disabled={loading||googleLoading}>{loading?'Creating your account…':'Create account'}</button></form>{msg&&<div className="notice" style={{color:msg.toLowerCase().includes('created')?'#c7f9d4':'#ffb4b4'}}>{msg}</div>}<p className="muted">Already have an account? <a href="/login">Log in</a></p></section></main>
 }
